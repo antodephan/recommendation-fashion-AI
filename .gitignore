@@ -43,17 +43,18 @@ qdrant_data/
 uploads/
 .docker-volumes/
 
-# --- dataset & model artifacts ---
+# --- dataset & model artifacts (local only, mounted in Docker) ---
 *.pkl
 *.h5
 *.pt
 *.onnx
-Fashion-Recomendation-AI-ChatBot/data/
-Fashion-Recomendation-AI-ChatBot/uploads/
-Fashion-Recomendation-AI-ChatBot/model/
-Fashion-Recomendation-AI-ChatBot/vncorenlp/
+Fashion-Recomendation-AI-ChatBot/
 
-# --- nested git metadata (include legacy source, not its .git) ---
+# --- presentation binaries (not part of the app) ---
+presentation/*.docx
+presentation/*.pptx
+
+# --- nested git metadata ---
 Fashion-Recomendation-AI-ChatBot/.git/
 
 # --- builds ---
