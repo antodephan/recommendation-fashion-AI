@@ -2,44 +2,34 @@
 
 from __future__ import annotations
 
-from sqlalchemy import case, select
+from uuid import UUID
 
 from fastapi import APIRouter, Query
 
 from app.core.deps import DbSession
-from app.models.trend import FashionTrend
+from app.services.trend_service import TrendService, current_season
 
 router = APIRouter()
 
 
 @router.get("")
-async def list_trends(db: DbSession, season: str | None = Query(default=None), limit: int = 30):
-    stmt = (
-        select(FashionTrend)
-        .order_by(
-            case((FashionTrend.source == "H&M", 0), else_=1),
-            FashionTrend.published_at.desc().nullslast(),
-            FashionTrend.popularity.desc(),
-            FashionTrend.created_at.desc(),
-        )
-        .limit(limit)
-    )
-    if season:
-        stmt = stmt.where(FashionTrend.season == season)
-    rows = await db.execute(stmt)
-    items = list(rows.scalars().all())
-    return [
-        {
-            "id": str(t.id),
-            "title": t.title,
-            "summary": t.summary,
-            "image_url": t.image_url,
-            "source": t.source,
-            "source_url": t.source_url,
-            "tags": t.tags,
-            "season": t.season,
-            "popularity": t.popularity,
-            "published_at": t.published_at.isoformat() if t.published_at else None,
-        }
-        for t in items
-    ]
+async def list_trends(
+    db: DbSession,
+    season: str | None = Query(default=None, description="Filter by fashion season"),
+    limit: int = Query(default=12, ge=1, le=30),
+):
+    """Style trends for the season — editorial cards, not H&M product listings."""
+    service = TrendService(db)
+    items = await service.list_style_trends(season=season or current_season(), limit=limit)
+    return {"season": season or current_season(), "items": items}
+
+
+@router.get("/{trend_id}/outfits")
+async def trend_outfits(
+    trend_id: UUID,
+    db: DbSession,
+    limit: int = Query(default=8, ge=1, le=16),
+):
+    """H&M outfit picks for a style trend — loaded after the user clicks."""
+    service = TrendService(db)
+    return await service.get_trend_outfits(trend_id, limit=limit)

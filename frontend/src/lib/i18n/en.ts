@@ -106,7 +106,14 @@ export const en = {
     defaultQuery: 'Outfits similar to my inspiration photo'
   },
   trends: {
-    title: 'Trending Now'
+    title: 'Trending Styles',
+    subtitle:
+      'Seasonal style directions ranked by catalog signals and vector search — tap a trend to shop matching H&M pieces.',
+    seasonLabel: 'Season',
+    popularityHint: 'Trend strength from catalog + vector signals',
+    showOutfits: 'Shop this trend on H&M',
+    hideOutfits: 'Hide outfit picks',
+    outfitsFailed: 'Could not load H&M picks for this trend'
   },
   outfits: {
     title: 'Saved Outfits',

@@ -29,7 +29,7 @@ class AdminInsightsService:
             select(func.count(Outfit.id)).where(Outfit.brand == "H&M")
         ) or 0
         active_trends = await self.db.scalar(
-            select(func.count(FashionTrend.id)).where(FashionTrend.source == "H&M")
+            select(func.count(FashionTrend.id)).where(FashionTrend.source != "H&M")
         ) or 0
         last_sync = await self.db.execute(
             select(SyncRun).order_by(desc(SyncRun.created_at)).limit(1)

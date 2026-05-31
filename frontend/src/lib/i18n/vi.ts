@@ -109,7 +109,14 @@ export const vi: typeof en = {
     defaultQuery: 'Outfit tương tự ảnh cảm hứng của tôi'
   },
   trends: {
-    title: 'Xu hướng nổi bật'
+    title: 'Xu hướng phong cách',
+    subtitle:
+      'Gợi ý phong cách theo mùa, xếp hạng từ dữ liệu catalog và vector DB — bấm vào xu hướng để xem quần áo H&M phù hợp.',
+    seasonLabel: 'Mùa',
+    popularityHint: 'Độ hot từ catalog + vector DB',
+    showOutfits: 'Xem đồ H&M theo xu hướng',
+    hideOutfits: 'Ẩn gợi ý trang phục',
+    outfitsFailed: 'Không tải được sản phẩm H&M cho xu hướng này'
   },
   outfits: {
     title: 'Outfit đã lưu',
