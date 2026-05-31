@@ -1,0 +1,61 @@
+# --- env & secrets (keep .env.example + superadmin bootstrap vars) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+credentials.json
+secrets/
+*_API_KEY=*
+OPENAI_API_KEY=*
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+*.log
+backend/.coverage
+backend/htmlcov/
+
+# --- node / next ---
+node_modules/
+.next/
+out/
+.vercel/
+*.tsbuildinfo
+
+# --- editors / IDE ---
+.vscode/
+.idea/
+.DS_Store
+.cursor/
+
+# --- docker / runtime data ---
+postgres_data/
+redis_data/
+qdrant_data/
+uploads/
+.docker-volumes/
+
+# --- dataset & model artifacts ---
+*.pkl
+*.h5
+*.pt
+*.onnx
+Fashion-Recomendation-AI-ChatBot/data/
+Fashion-Recomendation-AI-ChatBot/uploads/
+Fashion-Recomendation-AI-ChatBot/model/
+Fashion-Recomendation-AI-ChatBot/vncorenlp/
+
+# --- nested git metadata (include legacy source, not its .git) ---
+Fashion-Recomendation-AI-ChatBot/.git/
+
+# --- builds ---
+dist/
+build/

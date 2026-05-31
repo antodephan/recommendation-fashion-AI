@@ -1,0 +1,48 @@
+# Core framework
+fastapi==0.115.5
+uvicorn[standard]==0.32.0
+pydantic==2.9.2
+pydantic-settings==2.6.1
+python-multipart==0.0.12
+
+# Async DB
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.13.3
+
+# Auth / security
+passlib[bcrypt]==1.7.4
+bcrypt>=4.0.1,<5.0.0
+python-jose[cryptography]==3.3.0
+itsdangerous==2.2.0
+authlib==1.3.2
+httpx==0.27.2
+email-validator==2.2.0
+
+# Redis
+redis==5.1.1
+
+# Vector DB
+qdrant-client==1.12.1
+
+# AI / LLM / RAG (RAG pipeline is implemented in ai_engine/ without LangChain)
+openai==1.54.4
+tiktoken==0.8.0
+
+# Image / vision
+pillow==11.0.0
+numpy>=1.26.4,<2
+scikit-learn>=1.5.0,<2
+
+# Logging / observability
+loguru==0.7.2
+sentry-sdk[fastapi]==2.17.0
+
+# Misc
+python-dotenv==1.0.1
+tenacity==9.0.0
+httpx-oauth==0.15.1
+slowapi==0.1.9
+apscheduler==3.10.4
+beautifulsoup4==4.12.3
+markdown==3.7

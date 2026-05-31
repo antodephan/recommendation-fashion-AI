@@ -1,0 +1,12 @@
+Flask
+python-dotenv>=1.0.0
+openai>=1.30.0
+Gunicorn
+pandas
+scikit-learn
+joblib
+numpy
+torch
+tensorflow
+torchvision
+vncorenlp

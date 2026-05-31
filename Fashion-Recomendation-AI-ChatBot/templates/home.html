@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gợi ý thời trang thời gian thực</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    body {
+      background: #fdfdfd;
+      color: #1f2937;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-app {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      border: 2px solid #f97316;
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 14px 35px rgba(249, 115, 22, 0.12);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid #fed7aa;
+      background: linear-gradient(180deg, #fffaf5 0%, #ffffff 100%);
+      flex-shrink: 0;
+    }
+
+    .chat-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .chat-header-copy {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .chat-header h1 {
+      font-size: 22px;
+      color: #ea580c;
+      font-weight: 700;
+    }
+
+    .chat-header p {
+      font-size: 13px;
+      color: #9a3412;
+      margin-top: 4px;
+    }
+
+    .new-chat-form {
+      flex-shrink: 0;
+    }
+
+    .btn-new-chat {
+      border: 1px solid #f97316;
+      background: #fff;
+      color: #c2410c;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-new-chat:hover {
+      background: #fff7ed;
+    }
+
+    .chat-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fff;
+      overscroll-behavior: contain;
+    }
+
+    #chat-scroll-anchor {
+      flex-shrink: 0;
+      width: 100%;
+      height: 1px;
+      overflow: hidden;
+      pointer-events: none;
+      visibility: hidden;
+    }
+
+    .empty-hint {
+      color: #9a3412;
+      font-size: 13px;
+    }
+
+    .bubble {
+      max-width: 86%;
+      border-radius: 16px;
+      padding: 12px 14px;
+      line-height: 1.55;
+      font-size: 14px;
+      white-space: pre-line;
+      border: 1px solid transparent;
+    }
+
+    .bubble.assistant {
+      align-self: flex-start;
+      background: #fff7ed;
+      border-color: #fed7aa;
+      color: #7c2d12;
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: #fff;
+      border: 1px solid #fdba74;
+      color: #111827;
+    }
+
+    .bubble-title {
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #9a3412;
+    }
+
+    .image-preview {
+      margin-top: 10px;
+    }
+
+    .image-preview img {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #fdba74;
+    }
+
+    .error-text {
+      margin-top: 10px;
+      color: #dc2626;
+      font-size: 13px;
+    }
+
+    .gallery {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .gallery::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .gallery::-webkit-scrollbar-thumb {
+      background: #fdba74;
+      border-radius: 4px;
+    }
+
+    .card {
+      flex: 0 0 auto;
+      width: 104px;
+      border: 1px solid #fed7aa;
+      border-radius: 12px;
+      padding: 6px;
+      background: #fff;
+    }
+
+    .card img {
+      width: 100%;
+      height: 88px;
+      object-fit: cover;
+      border-radius: 8px;
+      display: block;
+    }
+
+    .card p {
+      font-size: 11px;
+      margin-top: 4px;
+      color: #7c2d12;
+      word-break: break-word;
+      line-height: 1.35;
+      max-height: 2.75em;
+      overflow: hidden;
+    }
+
+    .outfit-grid {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 10px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 4px;
+      max-width: 100%;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+
+    .outfit-grid::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .outfit-grid::-webkit-scrollbar-thumb {
+      background: #fdba74;
+      border-radius: 4px;
+    }
+
+    .outfit-item {
+      flex: 0 0 auto;
+      width: 132px;
+      border: 1px solid #fed7aa;
+      border-radius: 12px;
+      padding: 8px;
+      background: #ffffff;
+    }
+
+    .outfit-item img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-top: 6px;
+      display: block;
+    }
+
+    .outfit-item p {
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .chat-composer {
+      border-top: 1px solid #fed7aa;
+      padding: 12px 14px;
+      background: #fffaf5;
+      flex-shrink: 0;
+    }
+
+    .composer-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .textarea-input {
+      flex: 1;
+      min-height: 50px;
+      max-height: 110px;
+      resize: vertical;
+      border: 1px solid #fdba74;
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #ffffff;
+      color: #1f2937;
+      outline: none;
+      font-size: 14px;
+    }
+
+    .textarea-input:focus,
+    .file-input:focus {
+      border-color: #f97316;
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.18);
+    }
+
+    .send-btn {
+      border: none;
+      border-radius: 12px;
+      background: #f97316;
+      color: #fff;
+      font-weight: 600;
+      height: 50px;
+      padding: 0 16px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .send-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .upload-row {
+      margin-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .upload-label {
+      font-size: 12px;
+      color: #9a3412;
+    }
+
+    .file-input {
+      width: min(320px, 100%);
+      border: 1px solid #fdba74;
+      border-radius: 10px;
+      padding: 6px;
+      font-size: 12px;
+      color: #7c2d12;
+      background: #fff;
+      outline: none;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 8px;
+      }
+
+      .chat-app {
+        border-radius: 16px;
+      }
+
+      .chat-header-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-new-chat {
+        width: 100%;
+      }
+
+      .bubble {
+        max-width: 95%;
+      }
+
+      .composer-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .send-btn {
+        width: 100%;
+        height: 42px;
+      }
+
+      .upload-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .file-input {
+        width: 100%;
+      }
+    }
+  </style>
+  </head>
+<body{% if composer_autofocus | default(False) %} data-composer-focus="1"{% endif %}>
+  <div class="chat-app">
+    <div class="chat-header">
+      <div class="chat-header-top">
+        <div class="chat-header-copy">
+          <h1>StyleCraft Chat</h1>
+          <p>Trò chuyện với trợ lý phối đồ theo ngữ cảnh của bạn</p>
+        </div>
+        <form class="new-chat-form" action="{{ url_for('new_chat') }}" method="post">
+          <button type="submit" class="btn-new-chat" title="Xoá lịch sử và bắt đầu hội thoại mới">Chat mới</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      {% if chat_history %}
+      {% for turn in chat_history %}
+      <div class="bubble user">
+        <div class="bubble-title">Bạn</div>
+        <div>{{ turn.user_prompt }}</div>
+        {% if turn.uploaded_image_url %}
+        <div class="image-preview">
+          <img src="{{ turn.uploaded_image_url }}" alt="Uploaded image">
+        </div>
+        {% endif %}
+      </div>
+      <div class="bubble assistant">
+        <div class="bubble-title">StyleCraft</div>
+        <div>{{ turn.generated_output }}</div>
+      </div>
+      {% endfor %}
+
+      {% if image_error %}
+      <div class="bubble assistant">
+        <div class="bubble-title">StyleCraft</div>
+        <p class="error-text">{{ image_error }}</p>
+      </div>
+      {% endif %}
+
+      {% if image_results %}
+      <div class="bubble assistant">
+        <div class="bubble-title">StyleCraft</div>
+        <div style="margin-top:2px;font-weight:600;">Sản phẩm tương tự theo ảnh:</div>
+        <div class="gallery">
+          {% for item in image_results %}
+          <div class="card">
+            <img src="{{ item.url }}" alt="{{ item.filename }}">
+            <p>{{ item.filename }}</p>
+            <p>Độ gần đúng: {{ item.score }}%</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if smart_outfit %}
+      <div class="bubble assistant">
+        <div class="bubble-title">StyleCraft</div>
+        <div style="margin-top:2px;font-weight:600;">{{ smart_outfit.title }}</div>
+        <p style="font-size:13px;margin-top:6px;">Style tham chiếu: {{ smart_outfit.anchor }}</p>
+        <div class="outfit-grid">
+          {% for item in smart_outfit["items"] %}
+          <div class="outfit-item">
+            <p><strong>{{ item.slot }}</strong></p>
+            <p style="font-size:13px; margin-top:5px;">{{ item.name }}</p>
+            <p style="font-size:12px; color:#9a3412; margin-top:4px;">{{ item.meta }}</p>
+            <img src="{{ item.url }}" alt="{{ item.name }}">
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+      {% else %}
+      <div class="bubble assistant">
+        <div class="bubble-title">StyleCraft</div>
+        <div>Chào bạn! Hãy mô tả hoàn cảnh mặc đồ của bạn, ví dụ: thời tiết, nơi đến, phong cách mong muốn.</div>
+        <div style="margin-top:8px;">Bạn cũng có thể tải ảnh style để mình gợi ý chính xác hơn.</div>
+      </div>
+      <div class="empty-hint">Lịch sử chat sẽ xuất hiện tại đây sau khi bạn gửi tin nhắn đầu tiên.</div>
+      {% endif %}
+      <div id="chat-scroll-anchor" aria-hidden="true"></div>
+    </div>
+
+    <form class="chat-composer" action="/" method="post" enctype="multipart/form-data">
+      <div class="composer-row">
+        <textarea id="user_prompt" name="user_prompt" class="textarea-input" placeholder="Nhắn cho StyleCraft..."></textarea>
+        <input class="send-btn" type="submit" value="Gửi gợi ý">
+      </div>
+      <div class="upload-row">
+        <span class="upload-label">Thêm ảnh tham khảo (tùy chọn)</span>
+        <input type="file" id="style_image" name="style_image" class="file-input" accept=".jpg,.jpeg,.png,.webp" />
+      </div>
+    </form>
+  </div>
+  <script>
+    (function () {
+      var chatBody = document.getElementById("chat-body");
+      var textarea = document.getElementById("user_prompt");
+
+      function scrollToLatestInThread() {
+        if (!chatBody) return;
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      if (chatBody) {
+        scrollToLatestInThread();
+        requestAnimationFrame(function () {
+          scrollToLatestInThread();
+          requestAnimationFrame(scrollToLatestInThread);
+        });
+        window.addEventListener("load", scrollToLatestInThread);
+        chatBody.querySelectorAll("img").forEach(function (img) {
+          img.addEventListener("load", scrollToLatestInThread);
+        });
+        [80, 250, 600].forEach(function (delay) {
+          setTimeout(scrollToLatestInThread, delay);
+        });
+      }
+
+      if (textarea && document.body.dataset.composerFocus === "1") {
+        textarea.focus({ preventScroll: true });
+      }
+    })();
+  </script>
+</body>
+</html>

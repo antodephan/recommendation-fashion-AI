@@ -1,0 +1,5 @@
+# GitHub rejects blobs > 100 MB; keep large artifacts local or use Git LFS
+model/feature_data.pkl
+.env
+__pycache__/
+*.pyc
