@@ -15,6 +15,26 @@ _BASE = "https://apidojo-hm-hennes-mauritz-v1.p.rapidapi.com"
 
 _VN_HINTS = ("vietnam", "vn", "việt", "viet nam", "asia")
 
+DEFAULT_HM_CATEGORIES: dict[str, list[str]] = {
+    "ladies": [
+        "ladies_newarrivals_all",
+        "ladies_newarrivals_clothes",
+        "ladies_dresses_party",
+        "ladies_tops_tshirts",
+        "ladies_trousers",
+        "ladies_jackets_coats",
+    ],
+    "men": [
+        "men_newarrivals_all",
+        "men_newarrivals_clothes",
+        "men_shirts_casual",
+        "men_trousers_chinos",
+        "men_jackets_coats",
+        "men_tshirts_tanktops",
+    ],
+    "kids": ["kids_newborn_viewall"],
+}
+
 
 class HMClientError(RuntimeError):
     """Raised when RapidAPI H&M returns an error payload."""

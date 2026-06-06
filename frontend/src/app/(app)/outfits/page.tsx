@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { OptimizedImage } from '@/components/ui/optimized-image';
 
 export default function SavedOutfitsPage() {
   const { t } = useTranslation();
@@ -58,10 +59,15 @@ export default function SavedOutfitsPage() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {favorites.map((o) => (
             <Card key={o.id} className="overflow-hidden">
-              <div className="aspect-[3/4] bg-secondary">
+              <div className="relative aspect-[3/4] bg-secondary">
                 {o.image_url && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={o.image_url} alt={o.name} className="h-full w-full object-cover" />
+                  <OptimizedImage
+                    src={o.image_url}
+                    alt={o.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
                 )}
               </div>
               <CardContent className="space-y-2 p-4">

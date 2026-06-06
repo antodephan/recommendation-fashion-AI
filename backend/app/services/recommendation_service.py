@@ -22,6 +22,8 @@ from app.services.hm_client import HMClient
 from app.services.preference_service import PreferenceService
 from app.services.season_service import infer_season
 from app.services.weather_service import WeatherService
+from app.utils.gender import normalize_gender
+from app.utils.style_matching import primary_canonical_style, resolve_canonical_styles
 
 from ai_engine.recommender import RecommendationEngine
 
@@ -49,8 +51,29 @@ class RecommendationService:
         except Exception:
             return "vn"
 
+    @staticmethod
+    def _apply_user_filters(user: User, filters: OutfitFilters) -> OutfitFilters:
+        """Merge profile gender, styles, budget into request filters."""
+        prefs = user.preferences or {}
+        if not filters.gender and user.gender:
+            filters.gender = normalize_gender(user.gender)
+        if not filters.style:
+            styles = prefs.get("styles") or []
+            if styles:
+                filters.style = primary_canonical_style(styles) or str(styles[0]).lower()
+                # Keep tag hints for vector search when style is Vietnamese free-text
+                extra_tags = resolve_canonical_styles(styles)
+                if extra_tags:
+                    filters.tags = list(dict.fromkeys([*filters.tags, *extra_tags]))
+        if filters.max_price is None and prefs.get("budget"):
+            try:
+                filters.max_price = float(prefs["budget"])
+            except (TypeError, ValueError):
+                pass
+        return filters
+
     async def recommend(self, user: User, req: RecommendationRequest) -> RecommendationResponse:
-        filters = req.filters or OutfitFilters()
+        filters = self._apply_user_filters(user, req.filters or OutfitFilters())
         location = req.location or user.location or "Ho Chi Minh City"
         weather = (
             await self.weather.current(location)

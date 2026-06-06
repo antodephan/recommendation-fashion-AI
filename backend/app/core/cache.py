@@ -38,3 +38,19 @@ async def cache_delete(*keys: str) -> None:
         await redis.delete(*keys)
     except Exception:
         pass
+
+
+async def cache_delete_prefix(prefix: str) -> None:
+    """Delete all keys starting with prefix (e.g. trends:)."""
+    redis = get_redis()
+    try:
+        keys: list[str] = []
+        async for key in redis.scan_iter(f"{prefix}*"):
+            keys.append(key)
+            if len(keys) >= 200:
+                await redis.delete(*keys)
+                keys = []
+        if keys:
+            await redis.delete(*keys)
+    except Exception:
+        pass

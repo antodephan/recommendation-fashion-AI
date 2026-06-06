@@ -11,6 +11,7 @@ from app.models.outfit import FavoriteOutfit, Outfit
 from app.models.recommendation import Recommendation, RecommendationFeedback
 from app.repositories.base import BaseRepository
 from app.schemas.outfit import OutfitFilters
+from app.utils.gender import gender_sql_values
 
 
 class OutfitRepository(BaseRepository[Outfit]):
@@ -25,7 +26,8 @@ class OutfitRepository(BaseRepository[Outfit]):
         if filters.season:
             conditions.append(Outfit.season == filters.season)
         if filters.gender:
-            conditions.append(Outfit.gender == filters.gender)
+            gender_values = gender_sql_values(filters.gender) or [filters.gender]
+            conditions.append(or_(*[Outfit.gender == g for g in gender_values]))
         if filters.occasion:
             conditions.append(Outfit.occasion == filters.occasion)
         if filters.body_type:

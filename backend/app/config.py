@@ -68,6 +68,9 @@ class Settings(BaseSettings):
     RAG_LEXICAL_RERANK_WEIGHT: float = 0.25
     RAG_PROFILE_RERANK_WEIGHT: float = 0.15
 
+    # -- Frontend (OAuth redirect target) -------------------------------
+    FRONTEND_URL: str = "http://localhost:3000"
+
     # -- OAuth ----------------------------------------------------------
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""
@@ -124,8 +127,12 @@ class Settings(BaseSettings):
     HM_CATALOG_IMPORT_LIMIT: int = 2000
     HM_CATALOG_SECTIONS: str = "ladies,men"
     HM_CATALOG_AUTO_IMPORT: bool = True
-    HM_TRENDS_SYNC_INTERVAL_HOURS: int = 72
+    HM_CATALOG_SYNC_INTERVAL_HOURS: int = 168
+    HM_TRENDS_SYNC_INTERVAL_HOURS: int = 168
     HM_SCHEDULER_ENABLED: bool = True
+    HM_LIVE_API_ENABLED: bool = True
+    HM_API_COOLDOWN_SECONDS: float = 1.5
+    HM_PRODUCTS_CACHE_TTL: int = 86400
 
     # -- Rate limiting --------------------------------------------------
     RATE_LIMIT_DEFAULT: str = "100/minute"
@@ -170,6 +177,10 @@ class Settings(BaseSettings):
         if raw.startswith("["):
             return json.loads(raw)
         return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+    @property
+    def frontend_url(self) -> str:
+        return (self.FRONTEND_URL or "http://localhost:3000").rstrip("/")
 
 
 @lru_cache

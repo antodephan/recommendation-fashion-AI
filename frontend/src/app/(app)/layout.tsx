@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -20,13 +20,19 @@ import { useAuth } from '@/store/auth';
 import { useTranslation } from '@/store/locale';
 import { Button } from '@/components/ui/button';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { user, hydrate, logout } = useAuth();
+  const { user, access_token, hydrated, hydrate, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const { t } = useTranslation();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const nav = [
     { href: '/chat', label: t('nav.chat'), icon: MessageSquare },
@@ -43,11 +49,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     hydrate().then(() => {
-      if (!useAuth.getState().user) router.replace('/login');
+      const { access_token: token, user: currentUser } = useAuth.getState();
+      if (!token || !currentUser) router.replace('/login');
     });
   }, [hydrate, router]);
 
-  if (!user) {
+  if (!mounted || !hydrated) {
     return (
       <div className="grid min-h-screen place-items-center text-muted-foreground">
         {t('common.loading')}
@@ -55,7 +62,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const isAdmin = user.role === 'admin' || user.role === 'superadmin';
+  if (!access_token) {
+    return null;
+  }
+
+  const displayUser = user;
+  const isAdmin = displayUser?.role === 'admin' || displayUser?.role === 'superadmin';
 
   return (
     <div className="grid min-h-screen grid-cols-[260px_1fr]">
@@ -86,8 +98,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="border-t p-3">
           <div className="mb-3 flex items-center justify-between px-2 text-sm">
             <div className="truncate">
-              <div className="truncate font-medium">{user.full_name || user.email}</div>
-              <div className="truncate text-xs text-muted-foreground">{user.email}</div>
+              {displayUser ? (
+                <>
+                  <div className="truncate font-medium">{displayUser.full_name || displayUser.email}</div>
+                  <div className="truncate text-xs text-muted-foreground">{displayUser.email}</div>
+                </>
+              ) : (
+                <>
+                  <Skeleton className="mb-1 h-4 w-32" />
+                  <Skeleton className="h-3 w-40" />
+                </>
+              )}
             </div>
           </div>
           <div className="mb-3 px-1">
@@ -99,8 +120,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               size="icon"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               aria-label={t('nav.toggleTheme')}
+              suppressHydrationWarning
             >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {mounted && theme === 'dark' ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
             </Button>
             <Button
               variant="outline"

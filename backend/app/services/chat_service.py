@@ -234,11 +234,7 @@ class ChatService:
         reply = "".join(buffer)
         latency_ms = (time.perf_counter() - started) * 1000
 
-        rec_payload = await self._post_turn_hooks(user, convo, content, reply, image_url)
         extra: dict[str, Any] = {"latency_ms": latency_ms, "model": self.llm.model}
-        if rec_payload:
-            extra["recommendations"] = rec_payload
-
         assistant_msg = await self.messages.add(
             conversation_id=convo.id,
             role=MessageRole.ASSISTANT,
@@ -255,7 +251,12 @@ class ChatService:
                 "latency_ms": latency_ms,
             },
         )
+
+        rec_payload = await self._post_turn_hooks(user, convo, content, reply, image_url)
         if rec_payload:
+            extra["recommendations"] = rec_payload
+            assistant_msg.extra = extra
+            await self.db.commit()
             yield self._sse("recommendations", rec_payload)
 
     @staticmethod

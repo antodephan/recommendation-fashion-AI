@@ -78,12 +78,12 @@ export default function LoginPage() {
 
           <div className="grid gap-2">
             <Button variant="outline" asChild>
-              <a href={`${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1/auth/oauth/google/login`}>
+              <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/auth/oauth/google/login`}>
                 {t('auth.continueGoogle')}
               </a>
             </Button>
             <Button variant="outline" asChild>
-              <a href={`${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1/auth/oauth/facebook/login`}>
+              <a href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/auth/oauth/facebook/login`}>
                 {t('auth.continueFacebook')}
               </a>
             </Button>

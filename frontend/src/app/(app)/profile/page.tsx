@@ -10,6 +10,13 @@ import { api, User } from '@/lib/api';
 import { useAuth } from '@/store/auth';
 import { useTranslation } from '@/store/locale';
 
+function normalizeProfileGender(gender?: string | null): string {
+  const g = (gender || '').trim().toLowerCase();
+  if (['male', 'nam', 'm', 'men', 'man'].includes(g)) return 'male';
+  if (['female', 'nu', 'nữ', 'f', 'women', 'woman'].includes(g)) return 'female';
+  return '';
+}
+
 export default function ProfilePage() {
   const { user, hydrate } = useAuth();
   const { t, locale } = useTranslation();
@@ -21,7 +28,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) return;
-    setForm(user);
+    setForm({ ...user, gender: normalizeProfileGender(user.gender) || undefined });
     setColors((user.preferences?.colors || []).join(', '));
     setBrands((user.preferences?.brands || []).join(', '));
     setStyles((user.preferences?.styles || []).join(', '));
@@ -87,11 +94,15 @@ export default function ProfilePage() {
             />
           </Field>
           <Field label={t('profile.gender')}>
-            <Input
+            <select
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               value={form.gender || ''}
-              onChange={(e) => setForm({ ...form, gender: e.target.value })}
-              placeholder="female / male / non-binary"
-            />
+              onChange={(e) => setForm({ ...form, gender: e.target.value || undefined })}
+            >
+              <option value="">{t('profile.genderUnspecified')}</option>
+              <option value="male">{t('profile.genderMale')}</option>
+              <option value="female">{t('profile.genderFemale')}</option>
+            </select>
           </Field>
           <Field label={t('profile.bodyType')}>
             <Input

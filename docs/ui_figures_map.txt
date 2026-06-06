@@ -1,0 +1,56 @@
+[T15] table: KHOA:
+[T37] table: Khoa:
+[T43] table: Tiêu chí
+[T64] table: Hình
+[T68] table: Bảng
+[T72] table: Viết tắt
+[T93] table: Hướng tiếp cận
+[P117] 1.5. Phạm vi đề tài
+[P118] 1.5.1. Trong phạm vi
+[P125] 1.5.2. Ngoài phạm vi
+[P183] 2.5. Content-based Filtering (CBF)
+[T196] table: Tiêu chí
+[T208] table: Collection
+[T217] table: # ai_engine/embeddings.py — embed single query embedding = await embed_text("minimalist spring office outfit neutral ton
+[T222] table: [User Query] → [Embed] → [Vector Search KB + Memory]                               ↓                     [Top-K Document
+[T286] table: Stakeholder
+[T290] table: ID
+[T294] table: ID
+[T302] table: UC
+[P332] 3.5. ERD Database
+[T337] table: Bảng
+[T365] table: Service
+[T378] table: Scenario
+[T395] table: class Outfit(Base):     __tablename__ = "outfits"     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_
+[T400] table: Method
+[T410] table: Role
+[P413] 4.5. Chat System
+[T423] table: event: token data: {"content": "Hello"}  event: done data: {"id": "...", "content": "...", "latency_ms": 1234}  event: r
+[T436] table: async def retrieve_context(query: str, *, user_id: str | None = None, top_k: int = 6):     embedding = await embed_text(
+[T445] table: # app/core/cache.py async def cache_set(key: str, value: Any, ttl: int = 60) -> None:     await redis.set(key, json.dump
+[T449] table: Service
+[T452] table: docker compose up --build
+[T463] table: Layer
+[P467] 5.1. Landing Page (/)
+[P475] 5.2. Login / Register (/login, /register)
+[P483] 5.3. Chat AI Interface (/chat)
+[P496] 5.4. Recommendation Dashboard (/recommendations)
+[P499] 5.5. Fashion Trend Page (/trends, /trends/[id])
+[P510] 5.6. Saved Outfit Page (/outfits)
+[P513] 5.7. Profile (/profile)
+[P515] 5.8. Admin Dashboard (/admin)
+[T530] table: Endpoint
+[T537] table: Kiểm tra
+[P539] 6.5. AI Response Evaluation
+[T541] table: Tiêu chí
+[T558] table: Metric
+[T562] table: Ưu điểm
+[T618] table: DATABASE_URL=postgresql+asyncpg://fashion:fashion@postgres:5432/fashion REDIS_URL=redis://redis:6379/0 QDRANT_HOST=qdran
+[T621] table: # Khởi động hệ thống docker compose up --build  # Sync style trends docker compose exec backend python -m app.scripts.sy
+[P626] Chèn vào vị trí Hình 5.1–5.7, Hình 6.1–6.3 theo Danh sách hình ảnh.
+[T630] table: TC
+[T639] table: HM_CATALOG_AUTO_IMPORT=false HM_SCHEDULER_ENABLED=false HM_LIVE_API_ENABLED=false HM_CATALOG_IMPORT_LIMIT=50
+[T656] table: [System] SYSTEM_PROMPT + language_instruction + KB context block + season context [History] 20 turns gần nhất [User] mes
+[P659] Phụ lục G — Mô tả chi tiết giao diện (mẫu chèn hình)
+[T670] table: Nguồn mở rộng
+[P626] MATCH: Chèn vào vị trí Hình 5.1–5.7, Hình 6.1–6.3 theo Danh sách hình ảnh.

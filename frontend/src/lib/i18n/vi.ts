@@ -56,6 +56,8 @@ export const vi: typeof en = {
     newHere: 'Chưa có tài khoản?',
     createAccount: 'Tạo tài khoản',
     welcomeToast: 'Chào mừng trở lại!',
+    oauthSigningIn: 'Đang đăng nhập bằng Google…',
+    oauthFailed: 'Đăng nhập Google thất bại. Vui lòng thử lại.',
     invalidCredentials: 'Email hoặc mật khẩu không đúng',
     createTitle: 'Tạo tài khoản',
     createDesc: 'Bắt đầu trò chuyện với stylist AI cá nhân.',
@@ -111,12 +113,18 @@ export const vi: typeof en = {
   trends: {
     title: 'Xu hướng phong cách',
     subtitle:
-      'Gợi ý phong cách theo mùa, xếp hạng từ dữ liệu catalog và vector DB — bấm vào xu hướng để xem quần áo H&M phù hợp.',
+      'Gợi ý phong cách theo mùa từ catalog và vector DB — cá nhân hóa khi đăng nhập; bấm xu hướng để xem đồ H&M.',
     seasonLabel: 'Mùa',
+    personalizedBadge: 'Gợi ý riêng cho bạn',
     popularityHint: 'Độ hot từ catalog + vector DB',
     showOutfits: 'Xem đồ H&M theo xu hướng',
-    hideOutfits: 'Ẩn gợi ý trang phục',
-    outfitsFailed: 'Không tải được sản phẩm H&M cho xu hướng này'
+    backToList: 'Quay lại xu hướng',
+    outfitsTitle: 'Gợi ý H&M cho xu hướng này',
+    notFound: 'Không tìm thấy xu hướng',
+    noOutfits: 'Chưa có sản phẩm H&M cho xu hướng này. Kiểm tra RAPIDAPI_KEY và chạy import catalog H&M.',
+    loadFailed: 'Không tải được xu hướng. Kiểm tra backend đang chạy.',
+    outfitsFailed: 'Không tải được sản phẩm H&M cho xu hướng này',
+    empty: 'Chưa có xu hướng. Chạy đồng bộ xu hướng từ trang admin hoặc khởi động lại backend.'
   },
   outfits: {
     title: 'Outfit đã lưu',
@@ -132,6 +140,9 @@ export const vi: typeof en = {
     fullName: 'Họ và tên',
     location: 'Địa điểm',
     gender: 'Giới tính',
+    genderMale: 'Nam',
+    genderFemale: 'Nữ',
+    genderUnspecified: 'Chưa chọn',
     bodyType: 'Dáng người',
     height: 'Chiều cao (cm)',
     weight: 'Cân nặng (kg)',

@@ -1,0 +1,74 @@
+[P3] IMAGE_ONLY | 🙢🕮🙠
+[T15] diagram=False len=5 | KHOA:
+[P25] IMAGE_ONLY | 🙢🕮🙠
+[T37] diagram=False len=5 | Khoa:
+[T43] diagram=False len=8 | Tiêu chí
+[T64] diagram=False len=4 | Hình
+[T68] diagram=False len=4 | Bảng
+[T72] diagram=False len=8 | Viết tắt
+[T93] diagram=False len=14 | Hướng tiếp cận
+[P145] img=False | Doanh nghiệp: Mô hình tham khảo cho fashion e-commerce, stylist-as-a-service.
+[T196] diagram=False len=8 | Tiêu chí
+[T208] diagram=False len=10 | Collection
+[T217] diagram=False len=177 | # ai_engine/embeddings.py — embed single query embedding = await embed_text("minimalist spring office outfit neutral tones") # → list[float] length=1536 (hoặc theo model config)
+[P221] img=False | Nguyên lý (Hình 2.1 — mô tả text):
+[T222] diagram=False len=363 | [User Query] → [Embed] → [Vector Search KB + Memory]                               ↓                     [Top-K Documents]                               ↓                     [Form
+[P228] img=False | Định nghĩa: LLM là mô hình deep learning quy mô lớn (hàng tỷ parameters) huấn luyện trên corpus text khổng lồ, có khả năng hiểu và sinh ngôn ngữ tự nhiên.
+[T286] diagram=False len=11 | Stakeholder
+[T290] diagram=False len=2 | ID
+[T294] diagram=False len=2 | ID
+[T298] diagram=True len=1000 |                     ┌─────────────────────────────────────────┐                     │         AI Fashion Recommendation        │                     │              System (Couture 
+[P300] img=False | Hình 3.1 — Use Case Diagram (mô tả text)
+[T302] diagram=False len=2 | UC
+[T307] diagram=True len=628 | [Start] → User nhập message (+ optional image)     → [Validate JWT & Rate Limit]     → [Load/Create Conversation]     → [RAG: embed query → search KB + chat_memory]     → [Build sy
+[P310] img=False | Hình 3.2 — Activity Diagram: Luồng Chat và Gợi ý Outfit
+[T313] diagram=True len=733 | User          Frontend         Backend           PostgreSQL   │               │                │                  │   │──POST login──►│                │                  │   │     
+[P323] img=False | Hình 3.3: sơ đồ Use Case Diagram
+[T329] diagram=True len=805 | User       Frontend      ChatService      RAG/Qdrant    OpenAI      Postgres   │            │              │               │           │            │   │─message───►│─POST stream─►
+[P331] img=False | Hình 3.4
+[T334] diagram=True len=1516 | ┌─────────────┐       ┌──────────────────┐       ┌─────────────┐ │    users    │1─────*│  conversations   │1─────*│  messages   │ │─────────────│       │──────────────────│       │
+[P336] img=False | Hình 3.5 — Entity Relationship Diagram (PostgreSQL)
+[T337] diagram=False len=4 | Bảng
+[P339] img=False | 3.6. Kiến trúc hệ thống
+[T340] diagram=True len=977 |                          ┌────────────────┐                          │     Nginx      │   :80 / :443                          └──────┬─────────┘               ┌─────────────────┼──
+[P353] img=False | Hình 3.6 — Kiến trúc triển khai (Docker Compose + Nginx)
+[P354] img=False | 3.6.1. Kiến trúc phân lớp Backend
+[T355] diagram=False len=279 | HTTP/WS Layer     → app/api/v1/*, app/api/ws.py Service Layer     → app/services/* (use cases) Repository Layer  → app/repositories/* ORM Models        → app/models/* AI Engine    
+[T365] diagram=False len=7 | Service
+[P367] img=False | 3.7. Kiến trúc RAG Pipeline
+[T369] diagram=True len=1248 |                     ┌─────────────────┐                     │   User Query    │                     └────────┬────────┘                              ▼                     ┌────────
+[P371] img=False | Hình 3.8
+[P372] img=False | 3.8. Kiến trúc Hybrid Recommendation Engine
+[T374] diagram=True len=1125 | Inputs: query, user profile, filters, image_url, season, weather                               │         ┌─────────────────────┼─────────────────────┐         ▼                    
+[P376] img=False | Hình 3.7
+[T378] diagram=False len=8 | Scenario
+[T384] diagram=True len=789 | backend/ ├── app/ │   ├── api/v1/          # auth, chat, outfits, recommendations, trends, admin │   ├── services/        # chat_service, trend_service, auth_service, ... │   ├── r
+[T391] diagram=True len=446 | frontend/src/ ├── app/ │   ├── page.tsx                 # Landing │   ├── (auth)/login, register │   └── (app)/ │       ├── chat/page.tsx │       ├── recommendations/page.tsx │    
+[T395] diagram=False len=691 | class Outfit(Base):     __tablename__ = "outfits"     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)     name: Mapped[str] = mapped_column(String(255),
+[T400] diagram=False len=6 | Method
+[T410] diagram=False len=4 | Role
+[T423] diagram=False len=177 | event: token data: {"content": "Hello"}  event: done data: {"id": "...", "content": "...", "latency_ms": 1234}  event: recommendations data: {"items": [...], "reasoning": "..."}
+[T436] diagram=False len=479 | async def retrieve_context(query: str, *, user_id: str | None = None, top_k: int = 6):     embedding = await embed_text(query)     docs = []     kb_hits = await search(settings.QDR
+[T445] diagram=True len=137 | # app/core/cache.py async def cache_set(key: str, value: Any, ttl: int = 60) -> None:     await redis.set(key, json.dumps(value), ex=ttl)
+[T449] diagram=False len=7 | Service
+[T452] diagram=False len=25 | docker compose up --build
+[T463] diagram=False len=5 | Layer
+[P476] img=False | Chức năng: Xác thực email/password; link OAuth (Google/Facebook nếu cấu hình).
+[T530] diagram=False len=8 | Endpoint
+[T537] diagram=False len=8 | Kiểm tra
+[T541] diagram=False len=8 | Tiêu chí
+[T558] diagram=False len=6 | Metric
+[T562] diagram=False len=7 | Ưu điểm
+[P617] img=False | Phụ lục A — Cấu hình môi trường (.env mẫu)
+[T618] diagram=False len=240 | DATABASE_URL=postgresql+asyncpg://fashion:fashion@postgres:5432/fashion REDIS_URL=redis://redis:6379/0 QDRANT_HOST=qdrant OPENAI_API_KEY=sk-... JWT_SECRET=... HM_CATALOG_AUTO_IMPOR
+[T621] diagram=True len=425 | # Khởi động hệ thống docker compose up --build  # Sync style trends docker compose exec backend python -m app.scripts.sync_hm_trends  # Import H&M catalog (limit nhỏ) docker compos
+[P623] img=False | Phụ lục C — Hướng dẫn chèn hình ảnh vào Word
+[P626] img=False | Chèn vào vị trí Hình 5.1–5.7, Hình 6.1–6.3 theo Danh sách hình ảnh.
+[T630] diagram=False len=2 | TC
+[P638] img=False | Cấu hình giảm tải RapidAPI:
+[T639] diagram=False len=108 | HM_CATALOG_AUTO_IMPORT=false HM_SCHEDULER_ENABLED=false HM_LIVE_API_ENABLED=false HM_CATALOG_IMPORT_LIMIT=50
+[T642] diagram=True len=202 | RapidAPI H&M → HMClient (cache/throttle) → import_hm_catalog       → PostgreSQL outfits table       → embed_texts (OpenAI)       → Qdrant collection "outfits"       → sync_runs log
+[T656] diagram=False len=145 | [System] SYSTEM_PROMPT + language_instruction + KB context block + season context [History] 20 turns gần nhất [User] message + optional image_url
+[P659] img=False | Phụ lục G — Mô tả chi tiết giao diện (mẫu chèn hình)
+[P660] img=False | (Khi hoàn thiện Word, mỗi mục dưới đây nên kèm 1–2 hình chụp màn hình full-width)
+[T670] diagram=False len=13 | Nguồn mở rộng

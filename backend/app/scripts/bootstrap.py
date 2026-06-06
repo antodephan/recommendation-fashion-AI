@@ -73,7 +73,7 @@ async def main() -> None:
     if settings.RAPIDAPI_KEY:
         from app.scripts.sync_hm_trends import sync_hm_trends
 
-        await _safe_step("hm_trends", sync_hm_trends())
+        await _safe_step("hm_trends", sync_hm_trends(force=False))
     else:
         await _safe_step("trends", seed_trends())
     await _safe_step("kb", seed_knowledge_base())

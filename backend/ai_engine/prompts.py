@@ -85,6 +85,7 @@ def render_profile(user_profile: dict[str, Any]) -> str:
         ("Favorite colors", "colors"),
         ("Preferred brands", "brands"),
         ("Preferred styles", "styles"),
+        ("Avoid", "avoid"),
     ):
         value = user_profile.get(key)
         if value:

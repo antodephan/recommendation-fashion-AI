@@ -1,13 +1,19 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { Plus, MessageSquare, Trash2 } from 'lucide-react';
 import { useChat } from '@/store/chat';
 import { useTranslation } from '@/store/locale';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn, truncate } from '@/lib/utils';
-import { MessageBubble } from '@/components/chat/message-bubble';
 import { Composer } from '@/components/chat/composer';
+
+const MessageBubble = dynamic(
+  () => import('@/components/chat/message-bubble').then((m) => m.MessageBubble),
+  { loading: () => <Skeleton className="mb-4 h-16 w-full" /> }
+);
 
 export default function ChatPage() {
   const { t } = useTranslation();
@@ -24,14 +30,21 @@ export default function ChatPage() {
   } = useChat();
 
   const endRef = useRef<HTMLDivElement>(null);
+  const messageCountRef = useRef(0);
+  const conversationsLoaded = useRef(false);
 
   useEffect(() => {
+    if (conversationsLoaded.current) return;
+    conversationsLoaded.current = true;
     loadConversations();
   }, [loadConversations]);
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const count = messages.length;
+    if (count === 0 || count === messageCountRef.current) return;
+    messageCountRef.current = count;
+    endRef.current?.scrollIntoView({ behavior: streaming ? 'auto' : 'smooth' });
+  }, [messages.length, streaming]);
 
   const suggestions = [
     t('chat.suggestion1'),

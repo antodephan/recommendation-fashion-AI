@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Users } from 'lucide-react';
 import { api, User } from '@/lib/api';
@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { formatDate, cn } from '@/lib/utils';
 import {
   InsightsOverview,
@@ -39,37 +40,58 @@ export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [q, setQ] = useState('');
   const [syncing, setSyncing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const loadedTabs = useRef<Set<Tab>>(new Set());
 
-  const load = useCallback(async () => {
-    try {
-      const [ov, dauData, recData, styles, ut, ft, sync, page] = await Promise.all([
-        api.get('/admin/insights/overview'),
-        api.get('/analytics/dau'),
-        api.get('/admin/insights/recommendations?days=30'),
-        api.get('/analytics/popular-styles'),
-        api.get('/admin/insights/user-trends'),
-        api.get('/admin/insights/fashion-trends'),
-        api.get('/admin/insights/hm-sync?days=30'),
-        api.get<{ items: User[] }>('/admin/users?page=1&page_size=25')
-      ]);
-      setOverview(ov);
-      setDau(dauData);
-      setRecSeries(recData);
-      setPopularStyles(
-        (styles as any[]).map((r) => ({ name: r.name ?? r.style ?? '', favorites: r.favorites }))
-      );
-      setUserTrends(ut);
-      setFashionTrends(ft);
-      setSyncHistory(sync);
-      setUsers(page.items);
-    } catch (err: any) {
-      toast.error(err.message || t('admin.loadFailed'));
-    }
-  }, [t]);
+  const loadTab = useCallback(
+    async (target: Tab) => {
+      setLoading(true);
+      try {
+        if (target === 'overview') {
+          const [ov, dauData, recData, styles] = await Promise.all([
+            api.get('/admin/insights/overview'),
+            api.get('/analytics/dau'),
+            api.get('/admin/insights/recommendations?days=30'),
+            api.get('/analytics/popular-styles')
+          ]);
+          setOverview(ov);
+          setDau(dauData);
+          setRecSeries(recData);
+          setPopularStyles(
+            (styles as any[]).map((r) => ({ name: r.name ?? r.style ?? '', favorites: r.favorites }))
+          );
+        } else if (target === 'user-trends') {
+          setUserTrends(await api.get('/admin/insights/user-trends'));
+        } else if (target === 'fashion-trends') {
+          setFashionTrends(await api.get('/admin/insights/fashion-trends'));
+        } else if (target === 'hm-sync') {
+          setSyncHistory(await api.get('/admin/insights/hm-sync?days=30'));
+        } else if (target === 'users') {
+          const page = await api.get<{ items: User[] }>('/admin/users?page=1&page_size=25');
+          setUsers(page.items);
+        }
+        loadedTabs.current.add(target);
+      } catch (err: any) {
+        toast.error(err.message || t('admin.loadFailed'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [t]
+  );
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (loadedTabs.current.has(tab)) {
+      setLoading(false);
+      return;
+    }
+    loadTab(tab);
+  }, [tab, loadTab]);
+
+  async function reloadCurrentTab() {
+    loadedTabs.current.delete(tab);
+    await loadTab(tab);
+  }
 
   async function search() {
     const page = await api.get<{ items: User[] }>(`/admin/users?q=${encodeURIComponent(q)}`);
@@ -80,7 +102,7 @@ export default function AdminPage() {
     const newRole = user.role === 'admin' ? 'user' : 'admin';
     await api.patch<User>(`/admin/users/${user.id}`, { role: newRole });
     toast.success(`Role changed to ${newRole}`);
-    load();
+    reloadCurrentTab();
   }
 
   async function syncCatalog() {
@@ -88,7 +110,7 @@ export default function AdminPage() {
     try {
       const res = await api.post<{ message: string }>('/admin/hm/sync-catalog');
       toast.success(res.message);
-      load();
+      reloadCurrentTab();
     } catch (err: any) {
       toast.error(err.message || t('admin.syncFailed'));
     } finally {
@@ -101,7 +123,7 @@ export default function AdminPage() {
     try {
       const res = await api.post<{ message: string }>('/admin/hm/sync-trends');
       toast.success(res.message);
-      load();
+      reloadCurrentTab();
     } catch (err: any) {
       toast.error(err.message || t('admin.syncFailed'));
     } finally {
@@ -132,6 +154,13 @@ export default function AdminPage() {
         ))}
       </div>
 
+      {loading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-64 w-full" />
+        </div>
+      ) : (
+        <>
       {tab === 'overview' && (
         <InsightsOverview overview={overview} dau={dau} recSeries={recSeries} popularStyles={popularStyles} />
       )}
@@ -204,6 +233,8 @@ export default function AdminPage() {
             </div>
           </CardContent>
         </Card>
+      )}
+        </>
       )}
     </div>
   );

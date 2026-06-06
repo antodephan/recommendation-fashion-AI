@@ -60,6 +60,40 @@ async def get_current_user(
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 
+async def get_optional_user(
+    request: Request,
+    db: DbSession,
+    token: Annotated[str | None, Depends(oauth2_scheme)] = None,
+    authorization: Annotated[str | None, Header()] = None,
+) -> User | None:
+    """Return the authenticated user when a valid token is present, else None."""
+    raw_token = token
+    if not raw_token and authorization and authorization.lower().startswith("bearer "):
+        raw_token = authorization.split(" ", 1)[1]
+    if not raw_token:
+        raw_token = request.cookies.get("access_token")
+    if not raw_token:
+        return None
+
+    try:
+        payload = decode_token(raw_token, expected_type="access")
+        user_id_str = payload.get("sub")
+        if not user_id_str:
+            return None
+        user_id = UUID(user_id_str)
+    except Exception:
+        return None
+
+    repo = UserRepository(db)
+    user = await repo.get(user_id)
+    if not user or not user.is_active:
+        return None
+    return user
+
+
+OptionalUser = Annotated[User | None, Depends(get_optional_user)]
+
+
 def require_roles(*roles: UserRole):
     """Dependency factory enforcing RBAC."""
     allowed: Sequence[UserRole] = roles or ()

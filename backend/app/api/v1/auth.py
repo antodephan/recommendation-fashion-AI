@@ -11,6 +11,7 @@ from fastapi.responses import RedirectResponse
 from app.config import settings
 from app.core.deps import CurrentUser, DbSession
 from app.core.exceptions import ValidationError
+from app.core.logger import logger
 from app.core.rate_limit import rate_limit
 from app.schemas.auth import (
     EmailVerifyConfirm,
@@ -26,6 +27,23 @@ from app.schemas.user import UserRead
 from app.services.auth_service import AuthService
 
 router = APIRouter()
+
+
+def _oauth_frontend_redirect(access: str, refresh: str) -> RedirectResponse:
+    redirect = RedirectResponse(
+        f"{settings.frontend_url}/auth/callback"
+        f"?access_token={access}&refresh_token={refresh}"
+    )
+    _set_auth_cookies(redirect, access, refresh)
+    return redirect
+
+
+def _oauth_frontend_error(message: str) -> RedirectResponse:
+    from urllib.parse import quote
+
+    return RedirectResponse(
+        f"{settings.frontend_url}/auth/callback?error={quote(message)}"
+    )
 
 
 def _set_auth_cookies(response: Response, access: str, refresh: str) -> Response:
@@ -148,43 +166,48 @@ async def google_login():
 
 @router.get("/oauth/google/callback")
 async def google_callback(code: str, db: DbSession):
-    async with httpx.AsyncClient(timeout=10) as client:
-        token_resp = await client.post(
-            GOOGLE_TOKEN,
-            data={
-                "code": code,
-                "client_id": settings.GOOGLE_CLIENT_ID,
-                "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                "redirect_uri": settings.GOOGLE_REDIRECT_URI,
-                "grant_type": "authorization_code",
-            },
-        )
-        token_resp.raise_for_status()
-        token_data: dict[str, Any] = token_resp.json()
-        user_resp = await client.get(
-            GOOGLE_USERINFO,
-            headers={"Authorization": f"Bearer {token_data['access_token']}"},
-        )
-        user_resp.raise_for_status()
-        profile = user_resp.json()
+    if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
+        return _oauth_frontend_error("Google OAuth not configured")
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            token_resp = await client.post(
+                GOOGLE_TOKEN,
+                data={
+                    "code": code,
+                    "client_id": settings.GOOGLE_CLIENT_ID,
+                    "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                    "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                    "grant_type": "authorization_code",
+                },
+            )
+            token_resp.raise_for_status()
+            token_data: dict[str, Any] = token_resp.json()
+            user_resp = await client.get(
+                GOOGLE_USERINFO,
+                headers={"Authorization": f"Bearer {token_data['access_token']}"},
+            )
+            user_resp.raise_for_status()
+            profile = user_resp.json()
 
-    service = AuthService(db)
-    user = await service.upsert_oauth_user(
-        provider="google",
-        provider_account_id=str(profile["id"]),
-        email=profile["email"],
-        full_name=profile.get("name"),
-        avatar_url=profile.get("picture"),
-        access_token=token_data.get("access_token"),
-        refresh_token=token_data.get("refresh_token"),
-        raw_profile=profile,
-    )
-    access, refresh = await service.issue_tokens(user)
-    redirect = RedirectResponse(
-        f"http://localhost:3000/chat?access_token={access}&refresh_token={refresh}"
-    )
-    _set_auth_cookies(redirect, access, refresh)
-    return redirect
+        service = AuthService(db)
+        user = await service.upsert_oauth_user(
+            provider="google",
+            provider_account_id=str(profile["id"]),
+            email=profile["email"],
+            full_name=profile.get("name"),
+            avatar_url=profile.get("picture"),
+            access_token=token_data.get("access_token"),
+            refresh_token=token_data.get("refresh_token"),
+            raw_profile=profile,
+        )
+        access, refresh = await service.issue_tokens(user)
+        return _oauth_frontend_redirect(access, refresh)
+    except httpx.HTTPStatusError as exc:
+        logger.warning(f"Google OAuth token exchange failed: {exc.response.text}")
+        return _oauth_frontend_error("Google sign-in failed. Please try again.")
+    except Exception as exc:
+        logger.exception(f"Google OAuth callback failed: {exc}")
+        return _oauth_frontend_error("Google sign-in failed. Please try again.")
 
 
 @router.get("/oauth/facebook/login")
@@ -233,8 +256,4 @@ async def facebook_callback(code: str, db: DbSession):
         raw_profile=profile,
     )
     access, refresh = await service.issue_tokens(user)
-    redirect = RedirectResponse(
-        f"http://localhost:3000/chat?access_token={access}&refresh_token={refresh}"
-    )
-    _set_auth_cookies(redirect, access, refresh)
-    return redirect
+    return _oauth_frontend_redirect(access, refresh)

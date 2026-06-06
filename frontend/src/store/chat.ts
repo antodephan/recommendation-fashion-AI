@@ -86,6 +86,8 @@ export const useChat = create<ChatState>((set, get) => ({
       streaming: true
     }));
 
+    const wasNewConversation = !get().activeId;
+
     try {
       const base = process.env.NEXT_PUBLIC_API_URL || '';
       const res = await fetch(`${base}/api/v1/chat/stream`, {
@@ -160,7 +162,20 @@ export const useChat = create<ChatState>((set, get) => ({
           }
         }
       }
-      await get().loadConversations();
+      if (wasNewConversation && conversationId) {
+        set((state) => ({
+          conversations: [
+            {
+              id: conversationId,
+              title: content.slice(0, 40) || 'New chat',
+              pinned: false,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            },
+            ...state.conversations
+          ]
+        }));
+      }
     } catch (err: any) {
       set((state) => ({
         messages: state.messages.slice(0, -2),

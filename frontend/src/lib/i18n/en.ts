@@ -54,6 +54,8 @@ export const en = {
     newHere: 'New here?',
     createAccount: 'Create an account',
     welcomeToast: 'Welcome back!',
+    oauthSigningIn: 'Signing in with Google…',
+    oauthFailed: 'Google sign-in failed. Please try again.',
     invalidCredentials: 'Invalid credentials',
     createTitle: 'Create your account',
     createDesc: 'Start chatting with your personal AI stylist.',
@@ -108,12 +110,18 @@ export const en = {
   trends: {
     title: 'Trending Styles',
     subtitle:
-      'Seasonal style directions ranked by catalog signals and vector search — tap a trend to shop matching H&M pieces.',
+      'Seasonal style directions ranked by catalog signals and vector search — personalized when signed in; tap a trend to shop H&M pieces.',
     seasonLabel: 'Season',
+    personalizedBadge: 'Personalized for you',
     popularityHint: 'Trend strength from catalog + vector signals',
     showOutfits: 'Shop this trend on H&M',
-    hideOutfits: 'Hide outfit picks',
-    outfitsFailed: 'Could not load H&M picks for this trend'
+    backToList: 'Back to trends',
+    outfitsTitle: 'H&M picks for this trend',
+    notFound: 'Trend not found',
+    noOutfits: 'No H&M products available for this trend. Verify RAPIDAPI_KEY and run H&M catalog import.',
+    loadFailed: 'Could not load this trend. Check that the backend is running.',
+    outfitsFailed: 'Could not load H&M picks for this trend',
+    empty: 'No style trends yet. Run a trends sync from the admin panel or restart the backend.'
   },
   outfits: {
     title: 'Saved Outfits',
@@ -129,6 +137,9 @@ export const en = {
     fullName: 'Full name',
     location: 'Location',
     gender: 'Gender',
+    genderMale: 'Male',
+    genderFemale: 'Female',
+    genderUnspecified: 'Not specified',
     bodyType: 'Body type',
     height: 'Height (cm)',
     weight: 'Weight (kg)',
