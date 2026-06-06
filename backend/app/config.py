@@ -62,6 +62,12 @@ class Settings(BaseSettings):
     OPENAI_VISION_MODEL: str = "gpt-5.4-mini"
     EMBEDDING_DIM: int = 1536
 
+    # -- RAG ------------------------------------------------------------
+    RAG_QUERY_REWRITE_ENABLED: bool = True
+    RAG_RETRIEVAL_MULTIPLIER: int = 3
+    RAG_LEXICAL_RERANK_WEIGHT: float = 0.25
+    RAG_PROFILE_RERANK_WEIGHT: float = 0.15
+
     # -- OAuth ----------------------------------------------------------
     GOOGLE_CLIENT_ID: str = ""
     GOOGLE_CLIENT_SECRET: str = ""

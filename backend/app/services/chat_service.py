@@ -77,7 +77,13 @@ class ChatService:
         self, user: User, convo: Conversation, content: str, image_url: str | None
     ) -> list[dict[str, Any]]:
         history = await self.messages.recent_for_conversation(convo.id, limit=20)
-        kb_docs = await retrieve_context(content, user_id=str(user.id), top_k=4)
+        user_profile = self._rag_profile(user)
+        kb_docs = await retrieve_context(
+            content,
+            user_id=str(user.id),
+            top_k=4,
+            user_profile=user_profile,
+        )
         kb_block = format_kb_block(kb_docs)
 
         sys_msg = SYSTEM_PROMPT + language_instruction(user.locale)
@@ -276,3 +282,16 @@ class ChatService:
             )
         except Exception as exc:
             logger.warning(f"Chat memory indexing failed: {exc}")
+
+    @staticmethod
+    def _rag_profile(user: User) -> dict[str, Any]:
+        prefs = user.preferences or {}
+        return {
+            "gender": user.gender,
+            "body_type": user.body_type,
+            "location": user.location,
+            "colors": prefs.get("colors", []),
+            "brands": prefs.get("brands", []),
+            "styles": prefs.get("styles", []),
+            "budget": prefs.get("budget"),
+        }

@@ -311,12 +311,17 @@ class RecommendationEngine:
                 }
             )
 
-        # 3. RAG context
-        kb_docs = await retrieve_context(enriched_query, user_id=str(user.id), top_k=4)
+        # 3. profile + RAG context
+        profile = self._build_profile(user)
+        kb_docs = await retrieve_context(
+            enriched_query,
+            user_id=str(user.id),
+            top_k=4,
+            user_profile=profile,
+        )
         kb_block = format_kb_block(kb_docs)
 
-        # 4. profile + weather context
-        profile = self._build_profile(user)
+        # 4. weather context
         context_block = season_context_block(weather, season, hm_region)
         if filters.occasion:
             context_block += f"\n- Occasion: {filters.occasion}"

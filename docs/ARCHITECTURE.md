@@ -72,13 +72,18 @@ backend/
 ## RAG Pipeline
 
 ```
- user_query → embed → Qdrant.kb.search(top_k)
+ user_query → optional LLM query rewrite/expansion
+        → embed query variants
+        → Qdrant.kb.search(top_k × recall multiplier)
                     + Qdrant.chat_memory.search(user_filter)
-        → de-dupe + score-rank
+        → de-dupe + vector/lexical/profile re-rank
         → format context block (≤ 4000 chars)
         → inject into system prompt
         → LLM completion / stream
 ```
+
+Query rewriting is controlled by `RAG_QUERY_REWRITE_ENABLED`; if the OpenAI key is not
+configured or rewriting fails, retrieval falls back to the original query.
 
 ## Vector Collections
 
